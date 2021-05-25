@@ -1,0 +1,7 @@
+require('@babel/register')
+// require('./components/selection')
+// require('./components/pkg')
+// require('./components/static')
+// require('./components/exit')
+// require('./components/arkanoid')
+require('./components/project')
