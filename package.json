@@ -11,6 +11,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@azure/msal-node": "^1.1.0",
+    "axios": "^0.21.1",
+    "dotenv": "^10.0.0",
     "ink": "^3.0.8",
     "ink-select-input": "^4.2.0",
     "ink-text-input": "^4.0.1",
@@ -21,6 +24,9 @@
     "@babel/core": "^7.14.3",
     "@babel/preset-env": "^7.14.2",
     "@babel/preset-react": "^7.13.13",
-    "@babel/register": "^7.13.16"
+    "@babel/register": "^7.13.16",
+    "babel-core": "^6.26.3",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1"
   }
 }
