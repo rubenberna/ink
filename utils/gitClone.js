@@ -1,6 +1,6 @@
 import { spawnSync } from 'child_process';
 
-const repoUrl = 'https://github.com/rubenberna/data-tool'
+const repoUrl = 'https://github.com/rubenberna/data-tool-template'
 
 function run(cmd, args) {
   return spawnSync(cmd, args, { stdio: 'inherit' });
