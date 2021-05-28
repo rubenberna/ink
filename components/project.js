@@ -30,6 +30,7 @@ const SearchQuery = () => {
   useEffect(() => {
     auth()
   }, [])
+  
   useInput((input, key) => {
     if (key.return) {
       clone(query)
