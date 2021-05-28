@@ -7,7 +7,7 @@ function run(cmd, args) {
 }
 
 function clone(dest) {
-  const cmd = run('git', ['clone', '--depth=1', repoUrl, dest]);
+  const cmd = run('git', ['clone', '--quiet', '--depth=1', repoUrl, dest]);
 
   if (cmd.status == 0) {
     run('rm', ['-rf', `${dest}/.git`]);
