@@ -16,6 +16,7 @@
     "dotenv": "^10.0.0",
     "ink": "^3.0.8",
     "ink-select-input": "^4.2.0",
+    "ink-spinner": "^4.0.2",
     "ink-text-input": "^4.0.1",
     "react": "^16.14.0"
   },

@@ -6,4 +6,4 @@ require("babel-polyfill");
 // require('./components/static')
 // require('./components/exit')
 // require('./components/arkanoid')
-require('./components/project')
+require('./components/App')
