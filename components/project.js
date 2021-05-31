@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { render, Box, Text, useInput, useApp, Static } from 'ink';
 import TextInput from 'ink-text-input';
 import Spinner from 'ink-spinner';
-import { clone } from '../utils/gitClone';
-import { authenticate } from '../utils/auth';
+import { clone } from '../utils/clone.util';
+import { authenticate } from '../utils/auth.util';
 
 const SearchQuery = () => {
   const [loading, setLoading] = useState(false);

@@ -14,4 +14,5 @@ function clone(dest) {
   }
 }
 
+
 export { clone }
