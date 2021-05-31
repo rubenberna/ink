@@ -113,8 +113,11 @@ const RunProject = () => {
         <Text>What's your favourite package manager?</Text>
         <SelectInput items={items} onSelect={setManager}/>
       </Box>
-    )
-  }
+
+      <TextInput value={projectName} onChange={setProjectName} />
+    </Box>
+  )
+
 
   const renderSuccess = () => (
     <Box borderStyle="round" borderColor="green" width={40} padding={2}>
