@@ -15,6 +15,8 @@ const RunProject = () => {
   const [completed, setCompleted] = useState(false);
   const {exit} = useApp();
 
+  console.log({manager});
+
   useEffect(() => {
     _auth()
   }, []);
@@ -22,6 +24,9 @@ const RunProject = () => {
   useInput((input, key) => {
     if (key.return && steps.length === STEPS.PROJECT_NAME.nr) {
       return _addProjectName()
+    }
+    if (key.return && steps.length === STEPS.MANAGER.nr) {
+      return _addPackageManagerAndCloneProject(manager)
     }
   });
 
@@ -39,7 +44,7 @@ const RunProject = () => {
 
   const _auth = async () => {
     setLoadingMsg('Authenticating')
-    await DataToolTemplateUtil.auth()
+    // await DataToolTemplateUtil.auth()
     setUserIsAuthenticated(true);
     updateSteps(STEPS.AUTH)
     setLoadingMsg(undefined)
