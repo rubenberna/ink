@@ -8,14 +8,15 @@ const DataToolTemplateUtil = (() => {
     clone(projectName)
   }
 
-  const _installApp = (dest) => {
+  const _installApp = (dest, manager) => {
+    console.log(manager);
     process.chdir(dest)
-    return execa('yarn', ['install'])
+    return execa(manager, ['install'])
   }
 
-  const _installWorkbench = () => {
+  const _installWorkbench = (manager) => {
     process.chdir('workbench')
-    return execa('yarn', ['install'])
+    return execa(manager, ['install'])
   }
 
   return {
