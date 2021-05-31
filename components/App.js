@@ -10,12 +10,10 @@ const RunProject = () => {
   const [userIsAuthenticated, setUserIsAuthenticated] = useState(false);
   const [projectName, setProjectName] = useState('');
   const [manager, setManager] = useState(undefined);
-  const [loadingMsg, setLoadingMsg] = useState(undefined)
+  const [loadingMsg, setLoadingMsg] = useState(undefined);
   const [steps, setSteps] = useState([]);
   const [completed, setCompleted] = useState(false);
   const {exit} = useApp();
-
-  console.log({manager});
 
   useEffect(() => {
     _auth()
@@ -24,9 +22,6 @@ const RunProject = () => {
   useInput((input, key) => {
     if (key.return && steps.length === STEPS.PROJECT_NAME.nr) {
       return _addProjectName()
-    }
-    if (key.return && steps.length === STEPS.MANAGER.nr) {
-      return _addPackageManagerAndCloneProject(manager)
     }
   });
 
@@ -37,9 +32,14 @@ const RunProject = () => {
     ])
   };
 
+  const updatePackageManager = (item) => {
+    setManager(item.value)
+    return _addPackageManagerAndCloneProject(item.value)
+  }
+
   const _auth = async () => {
     setLoadingMsg('Authenticating')
-    // await DataToolTemplateUtil.auth()
+    await DataToolTemplateUtil.auth()
     setUserIsAuthenticated(true);
     updateSteps(STEPS.AUTH)
     setLoadingMsg(undefined)
@@ -49,7 +49,7 @@ const RunProject = () => {
     updateSteps(STEPS.PROJECT_NAME)
   }
 
-  const _addPackageManagerAndCloneProject = async () => {
+  const _addPackageManagerAndCloneProject = async (manager) => {
     setLoadingMsg('Preparing data tool')
     updateSteps(STEPS.MANAGER)
     await DataToolTemplateUtil.cloneProject(projectName)
@@ -58,11 +58,9 @@ const RunProject = () => {
     return _installProject(projectName, manager)
   }
 
-  const _installProject = async (dest) => {
-    console.log({manager});
+  const _installProject = async (dest, manager) => {
     setLoadingMsg('Installing dependencies')
     if (manager) {
-      console.log(manager);
       await DataToolTemplateUtil.installApp(dest, manager)
       await DataToolTemplateUtil.installWorkbench(manager)
       _finish()
@@ -86,16 +84,6 @@ const RunProject = () => {
       </Text>
   }
 
-  const renderDialog = () => (
-    <Box>
-      <Box marginRight={1}>
-        <Text>Enter the name of your project:</Text>
-      </Box>
-
-      <TextInput value={projectName} onChange={setProjectName} />
-    </Box>
-  )
-
   const renderSelectManager = () => {
     const items = [
       {
@@ -111,13 +99,20 @@ const RunProject = () => {
     return (
       <Box flexDirection="column">
         <Text>What's your favourite package manager?</Text>
-        <SelectInput items={items} onSelect={setManager}/>
+        <SelectInput items={items} onSelect={updatePackageManager}/>
+      </Box>
+    )
+  }
+
+  const renderDialog = () => (
+    <Box>
+      <Box marginRight={1}>
+        <Text>Enter the name of your project:</Text>
       </Box>
 
       <TextInput value={projectName} onChange={setProjectName} />
     </Box>
   )
-
 
   const renderSuccess = () => (
     <Box borderStyle="round" borderColor="green" width={40} padding={2}>

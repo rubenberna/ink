@@ -9,7 +9,6 @@ const DataToolTemplateUtil = (() => {
   }
 
   const _installApp = (dest, manager) => {
-    console.log(manager);
     process.chdir(dest)
     return execa(manager, ['install'])
   }
