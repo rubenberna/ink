@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { DataToolGenerator } from '../utils/dataToolTemplate.util';
 import { authenticate } from '../utils/auth.util';
-import { STEPS } from '../consts/steps.consts';
+import { STEPS, getStepsDetails } from '../consts/steps.consts';
 
 export const useRunProject = (steps, updateSteps, setLoadingMsg, setUserIsAuthenticated, setCompleted, projectName, manager, exit) => {
   const [os, setOs] = useState(undefined);
@@ -19,7 +19,7 @@ export const useRunProject = (steps, updateSteps, setLoadingMsg, setUserIsAuthen
   }
 
   useEffect(() => {
-    if (steps.length === STEPS.CLONE.nr) {
+    if (steps.length === getStepsDetails(STEPS.CLONE).nr) {
       getDataTool()
     }
   }, [steps])
@@ -28,7 +28,7 @@ export const useRunProject = (steps, updateSteps, setLoadingMsg, setUserIsAuthen
     setLoadingMsg('Authenticating')
     await authenticate()
     setUserIsAuthenticated(true);
-    updateSteps(STEPS.AUTH)
+    updateSteps(getStepsDetails(STEPS.AUTH))
     setLoadingMsg(undefined)
   }
 
@@ -36,13 +36,15 @@ export const useRunProject = (steps, updateSteps, setLoadingMsg, setUserIsAuthen
     const os = process.platform
     setOs(os)
     if (os === 'win32') {
-
+      updateSteps(getStepsDetails(STEPS.NPMRC))
+    } else {
+      updateSteps(getStepsDetails(STEPS.NPMRC, false, 'As you are not a Windows user, please check how to setup authentication to the feed here: https://docs.microsoft.com/en-us/azure/devops/artifacts/npm/npmrc?view=azure-devops#set-up-authentication-on-your-dev-box'))
     }
   }
 
   const _cloneProject = async (dataToolGenerator) => {
     await dataToolGenerator.cloneProject()
-    return updateSteps(STEPS.CLONE)
+    return updateSteps(getStepsDetails(STEPS.CLONE))
   }
 
   const _installProject = async (dataToolGenerator) => {
@@ -52,7 +54,7 @@ export const useRunProject = (steps, updateSteps, setLoadingMsg, setUserIsAuthen
   }
 
   const _finish = () => {
-    updateSteps(STEPS.INSTALLATION)
+    updateSteps(getStepsDetails(STEPS.INSTALLATION))
     setLoadingMsg(undefined)
     setCompleted(true)
     exit()
