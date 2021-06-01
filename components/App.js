@@ -7,14 +7,13 @@ import { STEPS } from '../consts/steps.consts';
 import { useRunProject } from '../hooks/useRunProject';
 
 const App = () => {
+  const {exit} = useApp();
   const [userIsAuthenticated, setUserIsAuthenticated] = useState(false);
   const [projectName, setProjectName] = useState('');
   const [manager, setManager] = useState(undefined);
   const [loadingMsg, setLoadingMsg] = useState(undefined);
   const [steps, setSteps] = useState([]);
   const [completed, setCompleted] = useState(false);
-  const [os, setOs] = useState(undefined)
-  const {exit} = useApp();
 
   useInput((input, key) => {
     if (key.return && steps.length === STEPS.PROJECT_NAME.nr) {
@@ -61,7 +60,7 @@ const App = () => {
 
     const items = [
       {
-        label: 'Yarn',
+        label: 'Yarn (recommended)',
         value: 'yarn'
       },
       {
@@ -90,7 +89,7 @@ const App = () => {
     )
   }
 
-  const renderSuccess = () => (
+  const renderSuccessMsg = () => (
     <Box borderStyle="round" borderColor="green" width={40} padding={2}>
       <Text>
         <Text italic>To start your project:</Text>
@@ -122,7 +121,7 @@ const App = () => {
       { loadingMsg && renderLoading() }
       { (userIsAuthenticated && steps.length === STEPS.PROJECT_NAME.nr )&& renderProjectNamePrompt() }
       { (userIsAuthenticated && steps.length === STEPS.MANAGER.nr )&& renderSelectManager() }
-      { completed && renderSuccess() }
+      { completed && renderSuccessMsg() }
     </>
   )
 };
