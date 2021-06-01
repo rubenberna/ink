@@ -3,7 +3,7 @@ import { render, Box, Text, useInput, useApp, Static, Newline } from 'ink';
 import TextInput from 'ink-text-input';
 import Spinner from 'ink-spinner';
 import SelectInput from 'ink-select-input';
-import { STEPS } from '../consts/steps.consts';
+import { STEPS, getStepsDetails } from '../consts/steps.consts';
 import { useRunProject } from '../hooks/useRunProject';
 
 const App = () => {
@@ -16,8 +16,8 @@ const App = () => {
   const [completed, setCompleted] = useState(false);
 
   useInput((input, key) => {
-    if (key.return && steps.length === STEPS.PROJECT_NAME.nr) {
-      updateSteps(STEPS.PROJECT_NAME)
+    if (key.return && steps.length === getStepsDetails(STEPS.PROJECT_NAME).nr) {
+      updateSteps(getStepsDetails(STEPS.PROJECT_NAME))
     }
   });
 
@@ -55,7 +55,7 @@ const App = () => {
     const handleChange = (item) => {
       setManager(item.value)
       setLoadingMsg('Preparing data tool')
-      updateSteps(STEPS.MANAGER)
+      updateSteps(getStepsDetails(STEPS.MANAGER))
     }
 
     const items = [
@@ -114,13 +114,17 @@ const App = () => {
       <Static items={steps}>
         {step => (
           <Box key={step.nr}>
-            <Text color="green">✔ {step.title}</Text>
+            { step.success ?
+              <Text color="green">✔ {step.title}</Text>
+              :
+              <Text color="red">&#x261E; {step.title}</Text>
+            }
           </Box>
         )}
       </Static>
       { loadingMsg && renderLoading() }
-      { (userIsAuthenticated && steps.length === STEPS.PROJECT_NAME.nr )&& renderProjectNamePrompt() }
-      { (userIsAuthenticated && steps.length === STEPS.MANAGER.nr )&& renderSelectManager() }
+      { (userIsAuthenticated && steps.length === getStepsDetails(STEPS.PROJECT_NAME).nr )&& renderProjectNamePrompt() }
+      { (userIsAuthenticated && steps.length === getStepsDetails(STEPS.MANAGER).nr )&& renderSelectManager() }
       { completed && renderSuccessMsg() }
     </>
   )
