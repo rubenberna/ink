@@ -46,7 +46,7 @@ const RunProject = () => {
 
   const _auth = async () => {
     setLoadingMsg('Authenticating')
-    // await authenticate()
+    await authenticate()
     setUserIsAuthenticated(true);
     updateSteps(STEPS.AUTH)
     setLoadingMsg(undefined)

@@ -1,7 +1,6 @@
 import execa from 'execa';
-import { clone } from './clone.util';
 
-const repoUrl = 'https://github.com/rubenberna/data-tool-template'
+const repoUrl = process.env.REPO
 
 export class DataToolGenerator {
   constructor(manager, dest, os) {
@@ -14,7 +13,6 @@ export class DataToolGenerator {
     return execa(this.manager, args)
   }
   async cloneProject() {
-    // clone(this.dest)
     const cmd = await execa('git', ['clone', '--quiet', '--depth=1', repoUrl, this.dest])
     if (cmd.status == 0) {
       return execa('rm', ['-rf', `${this.dest}/.git`]);
