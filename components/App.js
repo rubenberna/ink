@@ -13,6 +13,7 @@ const RunProject = () => {
   const [loadingMsg, setLoadingMsg] = useState(undefined);
   const [steps, setSteps] = useState([]);
   const [completed, setCompleted] = useState(false);
+  const [os, setOs] = useState(undefined)
   const {exit} = useApp();
 
   useInput((input, key) => {
