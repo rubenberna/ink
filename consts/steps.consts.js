@@ -1,27 +1,41 @@
 export const STEPS = {
-  AUTH: {
+  AUTH: 'AUTH',
+  NPMRC: 'NPMRC',
+  PROJECT_NAME: 'PROJECT_NAME',
+  MANAGER: 'MANAGER',
+  CLONE: 'CLONE',
+  INSTALLATION: 'INSTALLATION',
+}
+
+export const getStepsDetails = (name, boolean = true, title) => ({
+  [STEPS.AUTH]: {
     nr: 0,
     title: 'Authenticated',
-    success: true
+    success: boolean
   },
-  PROJECT_NAME: {
+  [STEPS.NPMRC]: {
     nr: 1,
-    title: 'Project name',
-    success: true
+    title: title || 'Connected to feed via vsts-npm-auth',
+    success: boolean
   },
-  MANAGER:  {
+  [STEPS.PROJECT_NAME]: {
     nr: 2,
-    title: 'Selected package manager',
-    success: true
+    title: 'Project name',
+    success: boolean
   },
-  CLONE:  {
+  [STEPS.MANAGER]:  {
     nr: 3,
-    title: 'Cloned repo',
-    success: true
+    title: 'Selected package manager',
+    success: boolean
   },
-  INSTALLATION:  {
+  [STEPS.CLONE]:  {
     nr: 4,
-    title: 'Installed dependencies',
-    success: true
+    title: 'Cloned repo',
+    success: boolean
   },
-}
+  [STEPS.INSTALLATION]:  {
+    nr: 5,
+    title: 'Installed dependencies',
+    success: boolean
+  },
+})[name]
