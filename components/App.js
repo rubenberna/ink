@@ -6,7 +6,7 @@ import SelectInput from 'ink-select-input';
 import { STEPS } from '../consts/steps.consts';
 import { useRunProject } from '../hooks/useRunProject';
 
-const RunProject = () => {
+const App = () => {
   const [userIsAuthenticated, setUserIsAuthenticated] = useState(false);
   const [projectName, setProjectName] = useState('');
   const [manager, setManager] = useState(undefined);
@@ -127,4 +127,4 @@ const RunProject = () => {
   )
 };
 
-render(<RunProject />);
+render(<App />);
