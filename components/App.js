@@ -3,10 +3,8 @@ import { render, Box, Text, useInput, useApp, Static, Newline } from 'ink';
 import TextInput from 'ink-text-input';
 import Spinner from 'ink-spinner';
 import SelectInput from 'ink-select-input';
-import { DataToolGenerator } from '../utils/dataToolTemplate.util';
-import { authenticate } from '../utils/auth.util';
-import { getOs } from '../utils/npmrc.util';
 import { STEPS } from '../consts/steps.consts';
+import { useRunProject } from '../hooks/useRunProject';
 
 const RunProject = () => {
   const [userIsAuthenticated, setUserIsAuthenticated] = useState(false);
@@ -18,17 +16,9 @@ const RunProject = () => {
   const [os, setOs] = useState(undefined)
   const {exit} = useApp();
 
-  let dataToolGenerator;
-
-  useEffect(() => {
-    _auth()
-    const os = getOs()
-    setOs(os)
-  }, []);
-
   useInput((input, key) => {
     if (key.return && steps.length === STEPS.PROJECT_NAME.nr) {
-      return _addProjectName()
+      updateSteps(STEPS.PROJECT_NAME)
     }
   });
 
@@ -39,50 +29,18 @@ const RunProject = () => {
     ])
   };
 
-  const updatePackageManager = (item) => {
-    setManager(item.value)
-    return _addPackageManager(item.value)
-  }
+  const {  startAuth } = useRunProject(steps,
+    updateSteps,
+    setLoadingMsg,
+    setUserIsAuthenticated,
+    setCompleted,
+    projectName,
+    manager,
+    exit)
 
-  const _auth = async () => {
-    setLoadingMsg('Authenticating')
-    // await DataToolTemplateUtil.auth()
-    setUserIsAuthenticated(true);
-    updateSteps(STEPS.AUTH)
-    setLoadingMsg(undefined)
-  }
-
-  const _addProjectName = () => {
-    updateSteps(STEPS.PROJECT_NAME)
-  }
-
-  const _addPackageManager = async (manager) => {
-    setLoadingMsg('Preparing data tool')
-    updateSteps(STEPS.MANAGER)
-    return _cloneProject(manager)
-  }
-
-  const _cloneProject = async (manager) => {
-    dataToolGenerator = new DataToolGenerator(manager, projectName, os)
-    await dataToolGenerator.cloneProject()
-    updateSteps(STEPS.CLONE)
-    setLoadingMsg(undefined)
-    return _installProject()
-  }
-
-  const _installProject = async () => {
-    setLoadingMsg('Installing dependencies')
-    await dataToolGenerator.installApp()
-    await dataToolGenerator.installWorkbench()
-    _finish()
-  }
-
-  const _finish = () => {
-    updateSteps(STEPS.INSTALLATION)
-    setLoadingMsg(undefined)
-    setCompleted(true)
-    exit()
-  }
+  useEffect(() => {
+    startAuth()
+  }, []);
 
   const renderLoading = () => {
     return loadingMsg &&
@@ -95,6 +53,12 @@ const RunProject = () => {
   }
 
   const renderSelectManager = () => {
+    const handleChange = (item) => {
+      setManager(item.value)
+      setLoadingMsg('Preparing data tool')
+      updateSteps(STEPS.MANAGER)
+    }
+
     const items = [
       {
         label: 'Yarn',
@@ -109,20 +73,22 @@ const RunProject = () => {
     return (
       <Box flexDirection="column">
         <Text>What's your favourite package manager?</Text>
-        <SelectInput items={items} onSelect={updatePackageManager}/>
+        <SelectInput items={items} onSelect={handleChange}/>
       </Box>
     )
   }
 
-  const renderDialog = () => (
-    <Box>
-      <Box marginRight={1}>
-        <Text>Enter the name of your project:</Text>
-      </Box>
+  const renderProjectNamePrompt = () => {
+    return (
+      <Box>
+        <Box marginRight={1}>
+          <Text>Enter the name of your project:</Text>
+        </Box>
 
-      <TextInput value={projectName} onChange={setProjectName} />
-    </Box>
-  )
+        <TextInput value={projectName} onChange={setProjectName} />
+      </Box>
+    )
+  }
 
   const renderSuccess = () => (
     <Box borderStyle="round" borderColor="green" width={40} padding={2}>
@@ -154,7 +120,7 @@ const RunProject = () => {
         )}
       </Static>
       { loadingMsg && renderLoading() }
-      { (userIsAuthenticated && steps.length === STEPS.PROJECT_NAME.nr )&& renderDialog() }
+      { (userIsAuthenticated && steps.length === STEPS.PROJECT_NAME.nr )&& renderProjectNamePrompt() }
       { (userIsAuthenticated && steps.length === STEPS.MANAGER.nr )&& renderSelectManager() }
       { completed && renderSuccess() }
     </>
