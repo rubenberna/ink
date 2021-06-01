@@ -41,12 +41,12 @@ const RunProject = () => {
 
   const updatePackageManager = (item) => {
     setManager(item.value)
-    return _addPackageManagerAndCloneProject(item.value)
+    return _addPackageManager(item.value)
   }
 
   const _auth = async () => {
     setLoadingMsg('Authenticating')
-    await authenticate()
+    // await authenticate()
     setUserIsAuthenticated(true);
     updateSteps(STEPS.AUTH)
     setLoadingMsg(undefined)
@@ -56,9 +56,13 @@ const RunProject = () => {
     updateSteps(STEPS.PROJECT_NAME)
   }
 
-  const _addPackageManagerAndCloneProject = async (manager) => {
+  const _addPackageManager = async (manager) => {
     setLoadingMsg('Preparing data tool')
     updateSteps(STEPS.MANAGER)
+    return _cloneProject(manager)
+  }
+
+  const _cloneProject = async (manager) => {
     dataToolGenerator = new DataToolGenerator(manager, projectName, os)
     await dataToolGenerator.cloneProject()
     updateSteps(STEPS.CLONE)
