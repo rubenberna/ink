@@ -9,8 +9,8 @@ export class DataToolGenerator {
     this.os = os;
   }
 
-  executeCmd(args) {
-    return execa(this.manager, args)
+  executeCmd(file, args) {
+    return execa(file, args)
   }
   async cloneProject() {
     const cmd = await execa('git', ['clone', '--quiet', '--depth=1', repoUrl, this.dest])
@@ -23,10 +23,10 @@ export class DataToolGenerator {
   }
   installApp() {
     process.chdir(this.dest)
-    return this.executeCmd(this.manager, ['install'])
+    return this.executeCmd(this.manager, ['install', '--force'])
   }
   installWorkbench(){
     process.chdir('workbench')
-    return this.executeCmd(this.manager, ['install'])
+    return this.executeCmd(this.manager, ['install', '--force'])
   }
 }
