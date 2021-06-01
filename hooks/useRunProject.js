@@ -1,18 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { STEPS, getStepsDetails } from '../consts/steps.consts';
 import { DataToolGenerator } from '../utils/dataToolTemplate.util';
 import { authenticate } from '../utils/auth.util';
-import { STEPS, getStepsDetails } from '../consts/steps.consts';
+import { installVstsAuth } from '../utils/npmrc'
 
 export const useRunProject = (steps, updateSteps, setLoadingMsg, setUserIsAuthenticated, setCompleted, projectName, manager, exit) => {
-  const [os, setOs] = useState(undefined);
-
   const startAuth = async () => {
     await _auth()
     await _getOs()
   }
 
   const getDataTool = async () => {
-    const dataToolGenerator = new DataToolGenerator(manager, projectName, os)
+    const dataToolGenerator = new DataToolGenerator(manager, projectName)
     await _cloneProject(dataToolGenerator)
     await _installProject(dataToolGenerator)
     _finish()
@@ -33,12 +32,15 @@ export const useRunProject = (steps, updateSteps, setLoadingMsg, setUserIsAuthen
   }
 
   const _getOs = async () => {
+    setLoadingMsg('Setting connection to feed')
     const os = process.platform
-    setOs(os)
     if (os === 'win32') {
+      await installVstsAuth()
       updateSteps(getStepsDetails(STEPS.NPMRC))
+      setLoadingMsg(undefined)
     } else {
       updateSteps(getStepsDetails(STEPS.NPMRC, false, 'As you are not a Windows user, please check how to setup authentication to the feed here: https://docs.microsoft.com/en-us/azure/devops/artifacts/npm/npmrc?view=azure-devops#set-up-authentication-on-your-dev-box'))
+      setLoadingMsg(undefined)
     }
   }
 
