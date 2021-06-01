@@ -35,6 +35,9 @@ export const useRunProject = (steps, updateSteps, setLoadingMsg, setUserIsAuthen
   const _getOs = async () => {
     const os = process.platform
     setOs(os)
+    if (os === 'win32') {
+
+    }
   }
 
   const _cloneProject = async (dataToolGenerator) => {
