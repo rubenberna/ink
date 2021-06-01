@@ -1,29 +1,32 @@
 import execa from 'execa';
-import { authenticate } from './auth.util';
-import { clone } from './clone.util';
 
-const DataToolTemplateUtil = (() => {
+const repoUrl = process.env.REPO
 
-  const _cloneProject = (projectName) => {
-    clone(projectName)
+export class DataToolGenerator {
+  constructor(manager, dest, os) {
+    this.manager = manager;
+    this.dest = dest;
+    this.os = os;
   }
 
-  const _installApp = (dest, manager) => {
-    process.chdir(dest)
-    return execa(manager, ['install'])
+  executeCmd(args) {
+    return execa(this.manager, args)
   }
-
-  const _installWorkbench = (manager) => {
+  async cloneProject() {
+    const cmd = await execa('git', ['clone', '--quiet', '--depth=1', repoUrl, this.dest])
+    if (cmd.status == 0) {
+      return execa('rm', ['-rf', `${this.dest}/.git`]);
+    }
+  }
+  installVstsAuth() {
+    return execa()
+  }
+  installApp() {
+    process.chdir(this.dest)
+    return this.executeCmd(this.manager, ['install'])
+  }
+  installWorkbench(){
     process.chdir('workbench')
-    return execa(manager, ['install'])
+    return this.executeCmd(this.manager, ['install'])
   }
-
-  return {
-    auth: authenticate,
-    cloneProject: _cloneProject,
-    installApp: _installApp,
-    installWorkbench: _installWorkbench
-  }
-})()
-
-export default DataToolTemplateUtil;
+}

@@ -3,7 +3,9 @@ import { render, Box, Text, useInput, useApp, Static, Newline } from 'ink';
 import TextInput from 'ink-text-input';
 import Spinner from 'ink-spinner';
 import SelectInput from 'ink-select-input';
-import DataToolTemplateUtil from '../utils/dataToolTemplate.util';
+import { DataToolGenerator } from '../utils/dataToolTemplate.util';
+import { authenticate } from '../utils/auth.util';
+import { getOs } from '../utils/npmrc.util';
 import { STEPS } from '../consts/steps.consts';
 
 const RunProject = () => {
@@ -13,20 +15,20 @@ const RunProject = () => {
   const [loadingMsg, setLoadingMsg] = useState(undefined);
   const [steps, setSteps] = useState([]);
   const [completed, setCompleted] = useState(false);
+  const [os, setOs] = useState(undefined)
   const {exit} = useApp();
 
-  console.log({manager});
+  let dataToolGenerator;
 
   useEffect(() => {
     _auth()
+    const os = getOs()
+    setOs(os)
   }, []);
 
   useInput((input, key) => {
     if (key.return && steps.length === STEPS.PROJECT_NAME.nr) {
       return _addProjectName()
-    }
-    if (key.return && steps.length === STEPS.MANAGER.nr) {
-      return _addPackageManagerAndCloneProject(manager)
     }
   });
 
@@ -39,7 +41,7 @@ const RunProject = () => {
 
   const updatePackageManager = (item) => {
     setManager(item.value)
-    return _addPackageManagerAndCloneProject(item.value)
+    return _addPackageManager(item.value)
   }
 
   const _auth = async () => {
@@ -54,22 +56,25 @@ const RunProject = () => {
     updateSteps(STEPS.PROJECT_NAME)
   }
 
-  const _addPackageManagerAndCloneProject = async (manager) => {
+  const _addPackageManager = async (manager) => {
     setLoadingMsg('Preparing data tool')
     updateSteps(STEPS.MANAGER)
-    await DataToolTemplateUtil.cloneProject(projectName)
-    updateSteps(STEPS.CLONE)
-    setLoadingMsg(undefined)
-    return _installProject(projectName, manager)
+    return _cloneProject(manager)
   }
 
-  const _installProject = async (dest, manager) => {
+  const _cloneProject = async (manager) => {
+    dataToolGenerator = new DataToolGenerator(manager, projectName, os)
+    await dataToolGenerator.cloneProject()
+    updateSteps(STEPS.CLONE)
+    setLoadingMsg(undefined)
+    return _installProject()
+  }
+
+  const _installProject = async () => {
     setLoadingMsg('Installing dependencies')
-    if (manager) {
-      await DataToolTemplateUtil.installApp(dest, manager)
-      await DataToolTemplateUtil.installWorkbench(manager)
-      _finish()
-    }
+    await dataToolGenerator.installApp()
+    await dataToolGenerator.installWorkbench()
+    _finish()
   }
 
   const _finish = () => {
