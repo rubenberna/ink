@@ -1,12 +1,10 @@
 import { useEffect } from 'react';
 import { STEPS, getStepsDetails } from '../consts/steps.consts';
 import { DataToolGenerator } from '../utils/dataToolTemplate.util';
-import { authenticate } from '../utils/auth.util';
 import { installVstsAuth } from '../utils/npmrc'
 
-export const useRunProject = (steps, updateSteps, setLoadingMsg, setUserIsAuthenticated, setCompleted, projectName, manager, exit) => {
+export const useRunProject = (steps, updateSteps, setLoadingMsg, setCompleted, projectName, manager, exit) => {
   const startAuth = async () => {
-    await _auth()
     await _getOs()
   }
 
@@ -22,14 +20,6 @@ export const useRunProject = (steps, updateSteps, setLoadingMsg, setUserIsAuthen
       getDataTool()
     }
   }, [steps])
-
-  const _auth = async () => {
-    setLoadingMsg('Authenticating')
-    await authenticate()
-    setUserIsAuthenticated(true);
-    updateSteps(getStepsDetails(STEPS.AUTH))
-    setLoadingMsg(undefined)
-  }
 
   const _getOs = async () => {
     setLoadingMsg('Setting connection to feed')
