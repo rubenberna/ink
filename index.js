@@ -1,4 +1,6 @@
-require('dotenv').config();
+#!/usr/bin/env node
+'use strict'
+
 require('@babel/register');
 require("babel-polyfill");
-require('./components/App');
+require('./lib/App');

@@ -1,6 +1,6 @@
 import execa from 'execa';
 
-const repoUrl = process.env.REPO
+const repoUrl = 'https://github.com/rubenberna/data-tool-template'
 
 export class DataToolGenerator {
   constructor(manager, dest) {
